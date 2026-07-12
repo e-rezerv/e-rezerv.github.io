@@ -220,8 +220,12 @@
     </div>
 
     <!-- ============ ОСНОВНЫЕ KPI (всё время / база) ============ -->
-    <div class="widget accent" data-widget-id="main-balance" data-cols="2">
-      <h3>💰 Касса</h3><div class="v" id="kpiBalance">—</div><div class="sv">USDT не выведено</div>
+    <div class="widget accent" data-widget-id="main-manual" data-cols="2">
+      <h3>🤝 Видано вручну (Telegram)</h3><div class="v" id="kpiManual">—</div><div class="sv" id="kpiManualSub">кодів</div>
+      <div class="widget-toolbar"><button class="widget-btn widget-handle" title="Перетащить">⠿</button><button class="widget-btn widget-hide" title="Скрыть">✕</button></div>
+    </div>
+    <div class="widget accent" data-widget-id="main-auto" data-cols="2">
+      <h3>💰 Баланс USDT (автопродажі)</h3><div class="v" id="kpiAuto">—</div><div class="sv">автопродажі через бота (крипта)</div>
       <div class="widget-toolbar"><button class="widget-btn widget-handle" title="Перетащить">⠿</button><button class="widget-btn widget-hide" title="Скрыть">✕</button></div>
     </div>
     <div class="widget green" data-widget-id="main-available" data-cols="2">
@@ -388,7 +392,7 @@
   const SB_URL = "https://ruphkmcecsfacatsanpi.supabase.co";
   const SB_KEY = "sb_publishable_ON7U-_lH254np35P2nj3vQ_ffL4-25t";
   const TOKEN_KEY = "rezerv_admin_token";
-  const LAYOUT_KEY = "rezerv_admin_layout_v2";
+  const LAYOUT_KEY = "rezerv_admin_layout_v3";
 
   // ───────────────────────────────────────────────────────────────────────
   // Каталог всех виджетов — id + название (для панели настроек).
@@ -396,7 +400,8 @@
   // ───────────────────────────────────────────────────────────────────────
   const WIDGETS = {
     "low-stock":          { title: "🚨 Алерт «мало кодов»", hideByDefault: false },
-    "main-balance":       { title: "💰 Касса" },
+    "main-manual":        { title: "🤝 Видано вручну (Telegram)" },
+    "main-auto":          { title: "💰 Баланс USDT (автопродажі)" },
     "main-available":     { title: "📦 Свободных кодов" },
     "main-bot-users":     { title: "🤖 Уник. пользователей бота" },
     "main-visitors":      { title: "🌐 Уник. посетителей сайта" },
@@ -625,8 +630,11 @@
     document.getElementById("kpiActiveTrials").textContent = data.active_trials ?? 0;
     document.getElementById("kpiSupport").textContent = sup.total ?? 0;
     document.getElementById("kpiSupportSub").textContent = "ответили: " + (supR.total ?? 0);
-    const orderPaidTotal = ev("order_paid").total ?? 0;
-    document.getElementById("kpiBalance").textContent = (orderPaidTotal * 26).toFixed(0);
+    const paid = data.paid || {};
+    const manualN = paid.manual ?? 0, autoN = paid.auto ?? 0;
+    document.getElementById("kpiManual").textContent = manualN;
+    document.getElementById("kpiManualSub").textContent = "кодів · ≈" + (manualN * 26) + " $";
+    document.getElementById("kpiAuto").textContent = (autoN * 26) + " $";
 
     // Funnel
     const f = data.funnel || {};
